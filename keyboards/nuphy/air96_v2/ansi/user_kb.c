@@ -881,10 +881,12 @@ void bootmagic_reset_eeprom(void) {}
 // stamped by this firmware means the stored keymap is ours: keep it. Fresh or
 // stock EEPROM still gets the default keymap. Should a release ever change the
 // keymap layout (layers, custom keycode values), it must force the reset.
+// An empty top-left key means no keymap was ever stored (coming from a build
+// without VIA): leave that to the reset.
 void via_init_kb(void) {
     user_config_t stored;
     eeconfig_read_kb_datablock(&stored, 0, sizeof(stored));
-    if ((stored.link_valid == LINK_CFG_VALID || stored.link_valid == LINK_CFG_VALID_V1) && !via_eeprom_is_valid()) {
+    if ((stored.link_valid == LINK_CFG_VALID || stored.link_valid == LINK_CFG_VALID_V1) && !via_eeprom_is_valid() && dynamic_keymap_get_keycode(0, 0, 0) != KC_NO) {
         via_eeprom_set_valid(true);
     }
 }
