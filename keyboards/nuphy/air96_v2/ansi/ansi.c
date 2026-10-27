@@ -616,13 +616,15 @@ void post_process_record_kb(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool rgb_matrix_indicators_kb(void) {
-    if (!rgb_matrix_indicators_user()) {
-        return false;
-    }
     void key_backlight_power(void);
     void layer_keys_show(void);
     key_backlight_power(); // battery: half brightness, fade when idle
-    layer_keys_show();     // drawn after, at full strength
+    // drawn after, at full strength: the keymap's layer lights too, or on battery
+    // they were dimmed and faded out while the cable kept them bright
+    if (!rgb_matrix_indicators_user()) {
+        return false;
+    }
+    layer_keys_show();
     return true;
 }
 
